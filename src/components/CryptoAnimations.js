@@ -65,46 +65,46 @@ const CryptoAnimations = () => {
   
   return (
     <div className={`crypto-container ${isLoaded ? 'loaded' : ''}`}>
-      {/* Bitcoin - lewy górny róg strony */}
+      {/* Bitcoin - lewy górny róg */}
       <div className="crypto-animation btc-animation" data-crypto="Bitcoin">
         <div className="crypto-circle btc-circle" ref={btcRef}>
           <div className="crypto-icon btc-icon"></div>
           <div className="crypto-hover-info">
             <h3>Bitcoin</h3>
-            <p>Pierwsza i najpopularniejsza kryptowaluta na świecie</p>
+            <p>Pierwsza i najpopularniejsza kryptowaluta</p>
           </div>
         </div>
       </div>
       
-      {/* Ethereum - prawy górny róg przy features */}
+      {/* Ethereum - prawy górny róg */}
       <div className="crypto-animation eth-animation" data-crypto="Ethereum">
         <div className="crypto-circle eth-circle" ref={ethRef}>
           <div className="crypto-icon eth-icon"></div>
           <div className="crypto-hover-info">
             <h3>Ethereum</h3>
-            <p>Zdecentralizowana platforma z kontraktami smart</p>
+            <p>Platforma z kontraktami smart</p>
           </div>
         </div>
       </div>
       
-      {/* Dogecoin - przy sekcji bloga */}
+      {/* Dogecoin - lewy dolny róg */}
       <div className="crypto-animation doge-animation" data-crypto="Dogecoin">
         <div className="crypto-circle doge-circle" ref={dogeRef}>
           <div className="crypto-icon doge-icon"></div>
           <div className="crypto-hover-info">
             <h3>Dogecoin</h3>
-            <p>Inspirowana memem kryptowaluta z oddaną społecznością</p>
+            <p>Inspirowana memem kryptowaluta</p>
           </div>
         </div>
       </div>
       
-      {/* Avalanche - przy sekcji newsletter */}
+      {/* Avalanche - prawy dolny róg */}
       <div className="crypto-animation avax-animation" data-crypto="AVAX">
         <div className="crypto-circle avax-circle" ref={avaxRef}>
           <div className="crypto-icon avax-icon"></div>
           <div className="crypto-hover-info">
             <h3>Avalanche</h3>
-            <p>Platforma blockchain znana z szybkości i efektywności</p>
+            <p>Szybka i efektywna platforma blockchain</p>
           </div>
         </div>
       </div>
