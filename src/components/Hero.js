@@ -1,6 +1,5 @@
 import React from 'react';
 import { FaDiscord, FaInfoCircle } from 'react-icons/fa';
-import CryptoAnimations from './CryptoAnimations';
 
 const Hero = () => {
   return (
@@ -23,8 +22,6 @@ const Hero = () => {
             </a>
           </div>
         </div>
-        
-        <CryptoAnimations />
       </div>
       <div className="blob blob-1"></div>
       <div className="blob blob-2"></div>

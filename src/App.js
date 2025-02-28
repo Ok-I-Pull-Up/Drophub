@@ -6,6 +6,7 @@ import Features from './components/Features';
 import Blog from './components/Blog';
 import Newsletter from './components/Newsletter';
 import Footer from './components/Footer';
+import CryptoAnimations from './components/CryptoAnimations';
 import './App.css';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
     <Router>
       <div className="App">
         <Header />
+        <CryptoAnimations /> {/* Dodane poza sekcjami treści */}
         <Routes>
           <Route path="/" element={
             <>
