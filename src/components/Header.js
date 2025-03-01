@@ -42,6 +42,7 @@ const Header = () => {
             <ul>
               <li><Link to="/" onClick={closeMenu}>Strona główna</Link></li>
               <li><a href="#features" onClick={closeMenu}>O nas</a></li>
+              <li><Link to="/edukacja" onClick={closeMenu}>Edukacja</Link></li>
               <li><a href="#blog" onClick={closeMenu}>Blog</a></li>
               <li><a href="#newsletter" onClick={closeMenu}>Newsletter</a></li>
               <li><a href="https://discord.gg/Awx7TMy6UZ" className="join-btn" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>

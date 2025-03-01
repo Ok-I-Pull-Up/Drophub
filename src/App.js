@@ -6,6 +6,7 @@ import Features from './components/Features';
 import Blog from './components/Blog';
 import Newsletter from './components/Newsletter';
 import Footer from './components/Footer';
+import Education from './pages/Education/Education';
 import './App.css';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
               <Newsletter />
             </>
           } />
+          <Route path="/edukacja" element={<Education />} />
           {/* Dodatkowe ścieżki można dodać tutaj */}
         </Routes>
         <Footer />
