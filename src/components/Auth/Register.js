@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFirebase } from '../../context/FirebaseContext';
 import './Auth.css';
@@ -10,13 +10,6 @@ const Register = () => {
 	const [loading, setLoading] = useState(false);
 	const [message, setMessage] = useState('');
 	const [error, setError] = useState('');
-	const [passwordRequirements, setPasswordRequirements] = useState({
-		length: false,
-		uppercase: false,
-		lowercase: false,
-		number: false,
-		special: false,
-	});
 
 	const { signUp } = useFirebase();
 	const navigate = useNavigate();
@@ -37,33 +30,6 @@ const Register = () => {
 		);
 	};
 
-	// Aktualizacja statusu wymagań dotyczących hasła
-	useEffect(() => {
-		setPasswordRequirements({
-			length: password.length >= 8,
-			uppercase: /[A-Z]/.test(password),
-			lowercase: /[a-z]/.test(password),
-			number: /\d/.test(password),
-			special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
-		});
-	}, [password]);
-
-	// Obliczanie siły hasła (0-100%)
-	const calculatePasswordStrength = () => {
-		let strength = 0;
-		const requirements = Object.values(passwordRequirements);
-		const fulfilledRequirements = requirements.filter(Boolean).length;
-		strength = (fulfilledRequirements / requirements.length) * 100;
-		return strength;
-	};
-
-	// Określenie koloru wskaźnika siły hasła
-	const getStrengthColor = (strength) => {
-		if (strength < 40) return '#ef4444'; // Czerwony
-		if (strength < 70) return '#f59e0b'; // Pomarańczowy
-		return '#22c55e'; // Zielony
-	};
-
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setLoading(true);
@@ -79,7 +45,9 @@ const Register = () => {
 
 		// Sprawdzanie siły hasła
 		if (!isStrongPassword(password)) {
-			setError('Hasło musi spełniać wszystkie wymagania wymienione poniżej');
+			setError(
+				'Hasło musi mieć minimum 8 znaków i zawierać: wielką literę, małą literę, cyfrę oraz znak specjalny'
+			);
 			setLoading(false);
 			return;
 		}
@@ -109,9 +77,6 @@ const Register = () => {
 			setLoading(false);
 		}
 	};
-
-	const strength = calculatePasswordStrength();
-	const strengthColor = getStrengthColor(strength);
 
 	return (
 		<div className='auth-container'>
@@ -143,85 +108,8 @@ const Register = () => {
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
 							required
-							placeholder='Wprowadź silne hasło'
+							placeholder='Min. 8 znaków: wielka litera, mała litera, cyfra, znak specjalny'
 						/>
-
-						{/* Wskaźnik siły hasła */}
-						{password.length > 0 && (
-							<div className='password-strength-container'>
-								<div className='password-strength-label'>
-									Siła hasła:
-									<span style={{ marginLeft: '8px', color: strengthColor }}>
-										{strength < 40
-											? 'Słabe'
-											: strength < 70
-											? 'Średnie'
-											: 'Silne'}
-									</span>
-								</div>
-								<div className='password-strength-bar'>
-									<div
-										className='password-strength-progress'
-										style={{
-											width: `${strength}%`,
-											backgroundColor: strengthColor,
-										}}></div>
-								</div>
-
-								{/* Box z wymaganiami hasła */}
-								<div className='password-requirements-box'>
-									<h4>Hasło musi zawierać:</h4>
-									<ul className='password-requirements-list'>
-										<li
-											className={
-												passwordRequirements.length ? 'fulfilled' : ''
-											}>
-											<span className='requirement-icon'>
-												{passwordRequirements.length ? '✓' : '○'}
-											</span>
-											Minimum 8 znaków
-										</li>
-										<li
-											className={
-												passwordRequirements.uppercase ? 'fulfilled' : ''
-											}>
-											<span className='requirement-icon'>
-												{passwordRequirements.uppercase ? '✓' : '○'}
-											</span>
-											Przynajmniej jedną wielką literę (A-Z)
-										</li>
-										<li
-											className={
-												passwordRequirements.lowercase ? 'fulfilled' : ''
-											}>
-											<span className='requirement-icon'>
-												{passwordRequirements.lowercase ? '✓' : '○'}
-											</span>
-											Przynajmniej jedną małą literę (a-z)
-										</li>
-										<li
-											className={
-												passwordRequirements.number ? 'fulfilled' : ''
-											}>
-											<span className='requirement-icon'>
-												{passwordRequirements.number ? '✓' : '○'}
-											</span>
-											Przynajmniej jedną cyfrę (0-9)
-										</li>
-										<li
-											className={
-												passwordRequirements.special ? 'fulfilled' : ''
-											}>
-											<span className='requirement-icon'>
-												{passwordRequirements.special ? '✓' : '○'}
-											</span>
-											Przynajmniej jeden znak specjalny (!@#$%^&*(),.?":{}
-											|&lt;&gt;)
-										</li>
-									</ul>
-								</div>
-							</div>
-						)}
 					</div>
 
 					<div className='form-group'>
