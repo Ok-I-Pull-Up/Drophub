@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useFirebase } from '../../context/FirebaseContext';
 import './Auth.css';
 
 const ResetPassword = () => {
@@ -8,24 +9,32 @@ const ResetPassword = () => {
 	const [message, setMessage] = useState('');
 	const [error, setError] = useState('');
 
+	const { resetPassword } = useFirebase();
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setLoading(true);
 		setError('');
 		setMessage('');
 
-		// Symulacja przetwarzania resetowania hasła
 		try {
-			// Czekamy 1.5s dla symulacji przetwarzania
-			await new Promise((resolve) => setTimeout(resolve, 1500));
+			console.log('Wysyłanie żądania resetowania hasła dla:', email);
 
-			// Symulacja sukcesu
-			setMessage(
-				'Wysłaliśmy instrukcje resetowania hasła na Twój adres email.'
-			);
+			const result = await resetPassword(email);
+
+			if (result.success) {
+				setMessage(
+					result.message ||
+						'Wysłaliśmy instrukcje resetowania hasła na Twój adres email.'
+				);
+			} else {
+				setError(
+					result.error || 'Nie udało się zresetować hasła. Spróbuj ponownie.'
+				);
+			}
 		} catch (err) {
+			console.error('Nieoczekiwany błąd podczas resetowania hasła:', err);
 			setError('Wystąpił nieoczekiwany błąd. Spróbuj ponownie.');
-			console.error(err);
 		} finally {
 			setLoading(false);
 		}

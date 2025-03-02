@@ -11,12 +11,12 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import ResetPassword from './components/Auth/ResetPassword';
 import Profile from './pages/Profile/Profile';
-import { UserProvider } from './context/UserContext';
+import { FirebaseProvider } from './context/FirebaseContext';
 import './App.css';
 
 function App() {
 	return (
-		<UserProvider>
+		<FirebaseProvider>
 			<Router>
 				<div className='App'>
 					<Header />
@@ -34,18 +34,18 @@ function App() {
 						/>
 						<Route path='/edukacja' element={<Education />} />
 
-						{/* Ścieżki autoryzacji (tylko front-end) */}
+						{/* Ścieżki autoryzacji */}
 						<Route path='/login' element={<Login />} />
 						<Route path='/register' element={<Register />} />
 						<Route path='/reset-password' element={<ResetPassword />} />
 
-						{/* Strona profilu (bez sprawdzania logowania) */}
+						{/* Strona profilu */}
 						<Route path='/profil' element={<Profile />} />
 					</Routes>
 					<Footer />
 				</div>
 			</Router>
-		</UserProvider>
+		</FirebaseProvider>
 	);
 }
 

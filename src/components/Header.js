@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaCube, FaDiscord, FaUser, FaSignOutAlt } from 'react-icons/fa';
-import { useUser } from '../context/UserContext';
+import { useFirebase } from '../context/FirebaseContext';
 
 const Header = () => {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 	const [scrolled, setScrolled] = useState(false);
-	const { user, signOut } = useUser();
+	const { user, signOut } = useFirebase();
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -26,9 +26,13 @@ const Header = () => {
 	// Funkcja obsługująca wylogowanie
 	const handleLogout = async () => {
 		try {
-			await signOut();
-			navigate('/login');
-			closeMenu(); // Zamykamy menu po wylogowaniu
+			const result = await signOut();
+			if (result.success) {
+				navigate('/login');
+				closeMenu(); // Zamykamy menu po wylogowaniu
+			} else {
+				console.error('Błąd podczas wylogowywania:', result.error);
+			}
 		} catch (error) {
 			console.error('Błąd podczas wylogowywania:', error);
 		}
