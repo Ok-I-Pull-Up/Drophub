@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import Header from './components/Header';
 import Hero from './components/Hero';
 // Importowanie tylko krytycznych komponentów bezpośrednio
@@ -19,51 +20,61 @@ const ResetPassword = lazy(() => import('./components/Auth/ResetPassword'));
 const Profile = lazy(() => import('./pages/Profile/Profile'));
 const PrivateRoute = lazy(() => import('./components/PrivateRoute'));
 
+// Lazy loading dla komponentów bloga
+const BlogPage = lazy(() => import('./pages/Blog/Blog'));
+const BlogPost = lazy(() => import('./pages/Blog/BlogPost'));
+
 // Prosty komponent ładowania
 const Loading = () => <div className='loading-spinner'>Ładowanie...</div>;
 
 function App() {
 	return (
 		<FirebaseProvider>
-			<Router>
-				<div className='App'>
-					<Header />
-					<Suspense fallback={<Loading />}>
-						<Routes>
-							<Route
-								path='/'
-								element={
-									<>
-										<Hero />
-										<Suspense fallback={<Loading />}>
-											<Features />
-											<Blog />
-											<Newsletter />
-										</Suspense>
-									</>
-								}
-							/>
-							<Route path='/edukacja' element={<Education />} />
+			<HelmetProvider>
+				<Router>
+					<div className='App'>
+						<Header />
+						<Suspense fallback={<Loading />}>
+							<Routes>
+								<Route
+									path='/'
+									element={
+										<>
+											<Hero />
+											<Suspense fallback={<Loading />}>
+												<Features />
+												<Blog />
+												<Newsletter />
+											</Suspense>
+										</>
+									}
+								/>
+								<Route path='/edukacja' element={<Education />} />
 
-							{/* Ścieżki autoryzacji */}
-							<Route path='/login' element={<Login />} />
-							<Route path='/register' element={<Register />} />
-							<Route path='/reset-password' element={<ResetPassword />} />
+								{/* Ścieżki bloga */}
+								<Route path='/blog' element={<BlogPage />} />
+								<Route path='/blog/:slug' element={<BlogPost />} />
 
-							{/* Zabezpieczone ścieżki wymagające uwierzytelnienia */}
-							<Route
-								path='/profil'
-								element={
-									<PrivateRoute>
-										<Profile />
-									</PrivateRoute>
-								}
-							/>
-						</Routes>
-						<Footer />
-					</Suspense>
-				</div>
-			</Router>
+								{/* Ścieżki autoryzacji */}
+								<Route path='/login' element={<Login />} />
+								<Route path='/register' element={<Register />} />
+								<Route path='/reset-password' element={<ResetPassword />} />
+
+								{/* Zabezpieczone ścieżki wymagające uwierzytelnienia */}
+								<Route
+									path='/profil'
+									element={
+										<PrivateRoute>
+											<Profile />
+										</PrivateRoute>
+									}
+								/>
+							</Routes>
+							<Footer />
+						</Suspense>
+					</div>
+				</Router>
+			</HelmetProvider>
 		</FirebaseProvider>
 	);
 }

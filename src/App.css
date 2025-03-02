@@ -1332,3 +1332,34 @@ footer {
 		height: 35px;
 	}
 }
+
+/* Przycisk Primary i kontener CTA */
+.cta-container {
+	display: flex;
+	justify-content: center;
+	margin-top: 2rem;
+	position: relative;
+	z-index: 1;
+}
+
+.btn-primary {
+	background: linear-gradient(
+		135deg,
+		var(--accent-primary),
+		var(--accent-secondary)
+	);
+	color: white;
+	padding: 0.8rem 1.5rem;
+	border-radius: 50px;
+	font-weight: 500;
+	text-decoration: none;
+	display: inline-block;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	border: none;
+	cursor: pointer;
+}
+
+.btn-primary:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 5px 15px rgba(121, 40, 202, 0.3);
+}
