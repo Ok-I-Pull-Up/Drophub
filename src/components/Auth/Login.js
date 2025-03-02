@@ -20,16 +20,12 @@ const Login = () => {
 		setMessage('');
 
 		try {
-			console.log('Próba logowania dla:', email);
-
-			// Logowanie przez Firebase
+			// Bez logowania adresu email do konsoli
 			const response = await signIn(email, password);
 
 			if (response.error) {
-				console.error('Błąd logowania:', response.error);
 				setError(response.error.message || 'Błąd logowania');
 			} else {
-				console.log('Logowanie udane:', response.data.user.email);
 				setMessage('Zalogowano pomyślnie!');
 				// Przekieruj użytkownika na stronę główną po udanym logowaniu
 				setTimeout(() => {
@@ -37,8 +33,10 @@ const Login = () => {
 				}, 1500);
 			}
 		} catch (err) {
-			console.error('Nieoczekiwany błąd podczas logowania:', err);
-			setError('Wystąpił nieoczekiwany błąd. Spróbuj ponownie.');
+			console.error('Błąd podczas logowania');
+			setError(
+				'Wystąpił błąd podczas przetwarzania żądania. Spróbuj ponownie później.'
+			);
 		} finally {
 			setLoading(false);
 		}

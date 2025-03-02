@@ -11,6 +11,7 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import ResetPassword from './components/Auth/ResetPassword';
 import Profile from './pages/Profile/Profile';
+import PrivateRoute from './components/PrivateRoute';
 import { FirebaseProvider } from './context/FirebaseContext';
 import './App.css';
 
@@ -39,8 +40,15 @@ function App() {
 						<Route path='/register' element={<Register />} />
 						<Route path='/reset-password' element={<ResetPassword />} />
 
-						{/* Strona profilu */}
-						<Route path='/profil' element={<Profile />} />
+						{/* Zabezpieczone ścieżki wymagające uwierzytelnienia */}
+						<Route
+							path='/profil'
+							element={
+								<PrivateRoute>
+									<Profile />
+								</PrivateRoute>
+							}
+						/>
 					</Routes>
 					<Footer />
 				</div>

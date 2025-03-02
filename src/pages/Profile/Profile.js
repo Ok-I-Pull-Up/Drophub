@@ -18,6 +18,7 @@ const Profile = () => {
 	const [website, setWebsite] = useState('');
 	const [message, setMessage] = useState('');
 	const [error, setError] = useState('');
+	const [securityNotice, setSecurityNotice] = useState(true);
 
 	// Pobieranie danych profilu użytkownika z Firestore
 	useEffect(() => {
@@ -86,6 +87,11 @@ const Profile = () => {
 		}
 	};
 
+	// Komunikat o zmianie hasła
+	const dismissSecurityNotice = () => {
+		setSecurityNotice(false);
+	};
+
 	// Jeśli nie ma użytkownika, pokazujemy komunikat o konieczności zalogowania
 	if (!user) {
 		return (
@@ -103,6 +109,22 @@ const Profile = () => {
 
 	return (
 		<div className='profile-container'>
+			{securityNotice && (
+				<div className='security-alert'>
+					<div className='security-content'>
+						<h3>Ważna informacja o bezpieczeństwie</h3>
+						<p>
+							Z przyczyn bezpieczeństwa, zmieniliśmy wymagania dotyczące siły
+							haseł. Zalecamy zmianę hasła na silniejsze, które zawiera minimum
+							8 znaków, w tym wielką literę, małą literę, cyfrę oraz znak
+							specjalny.
+						</p>
+						<button className='alert-button' onClick={dismissSecurityNotice}>
+							Rozumiem
+						</button>
+					</div>
+				</div>
+			)}
 			<div className='profile-header'>
 				<h1>Twój profil</h1>
 				<button className='logout-button' onClick={handleLogout}>

@@ -14,12 +14,25 @@ const firebaseConfig = {
 	appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
-// Inicjalizacja Firebase
-const app = initializeApp(firebaseConfig);
+// Inicjalizacja Firebase z obsługą błędów
+let app, auth, db, storage;
+
+try {
+	// Inicjalizacja Firebase
+	app = initializeApp(firebaseConfig);
+
+	// Inicjalizacja usług Firebase
+	auth = getAuth(app);
+	db = getFirestore(app);
+	storage = getStorage(app);
+
+	console.log('Firebase zostało pomyślnie zainicjalizowane');
+} catch (error) {
+	console.error('Błąd inicjalizacji Firebase:', error);
+	// W środowisku produkcyjnym można dodać kod do powiadomienia użytkownika o problemie
+	// lub przekierowania do strony serwisowej
+}
 
 // Eksport usług Firebase potrzebnych w aplikacji
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
-
+export { auth, db, storage };
 export default app;

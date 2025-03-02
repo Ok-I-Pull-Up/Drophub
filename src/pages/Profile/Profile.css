@@ -163,3 +163,50 @@
 		grid-template-columns: 1fr;
 	}
 }
+
+/* Style dla alertu bezpieczeństwa */
+.security-alert {
+	background-color: rgba(0, 0, 0, 0.7);
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1000;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.security-content {
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 8px;
+	max-width: 500px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.security-content h3 {
+	color: #e74c3c;
+	margin-bottom: 15px;
+}
+
+.security-content p {
+	margin-bottom: 20px;
+	line-height: 1.5;
+}
+
+.alert-button {
+	background-color: #3498db;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-weight: bold;
+	transition: background-color 0.3s;
+}
+
+.alert-button:hover {
+	background-color: #2980b9;
+}

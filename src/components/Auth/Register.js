@@ -14,6 +14,22 @@ const Register = () => {
 	const { signUp } = useFirebase();
 	const navigate = useNavigate();
 
+	// Funkcja sprawdzająca siłę hasła
+	const isStrongPassword = (password) => {
+		const hasUpperCase = /[A-Z]/.test(password);
+		const hasLowerCase = /[a-z]/.test(password);
+		const hasNumbers = /\d/.test(password);
+		const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+		return (
+			password.length >= 8 &&
+			hasUpperCase &&
+			hasLowerCase &&
+			hasNumbers &&
+			hasSpecial
+		);
+	};
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setLoading(true);
@@ -28,21 +44,23 @@ const Register = () => {
 		}
 
 		// Sprawdzanie siły hasła
-		if (password.length < 8) {
-			setError('Hasło musi mieć minimum 8 znaków');
+		if (!isStrongPassword(password)) {
+			setError(
+				'Hasło musi mieć minimum 8 znaków i zawierać: wielką literę, małą literę, cyfrę oraz znak specjalny'
+			);
 			setLoading(false);
 			return;
 		}
 
 		try {
-			console.log('Rozpoczynam proces rejestracji dla:', email);
+			// Bez logowania adresu email do konsoli
 			const response = await signUp(email, password);
 
 			if (response.error) {
-				console.error('Błąd rejestracji:', response.error);
-				setError(response.error.message || 'Błąd rejestracji. Spróbuj ponownie.');
+				setError(
+					response.error.message || 'Błąd rejestracji. Spróbuj ponownie.'
+				);
 			} else {
-				console.log('Rejestracja udana:', response.data.user.email);
 				setMessage('Rejestracja zakończona! Możesz teraz się zalogować.');
 
 				// Po udanej rejestracji przekieruj użytkownika na stronę logowania po 3 sekundach
@@ -51,8 +69,10 @@ const Register = () => {
 				}, 3000);
 			}
 		} catch (err) {
-			console.error('Nieoczekiwany błąd podczas rejestracji:', err);
-			setError('Wystąpił nieoczekiwany błąd. Spróbuj ponownie.');
+			console.error('Błąd podczas rejestracji');
+			setError(
+				'Wystąpił błąd podczas przetwarzania żądania. Spróbuj ponownie później.'
+			);
 		} finally {
 			setLoading(false);
 		}
@@ -88,7 +108,7 @@ const Register = () => {
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
 							required
-							placeholder='Minimum 8 znaków'
+							placeholder='Min. 8 znaków: wielka litera, mała litera, cyfra, znak specjalny'
 						/>
 					</div>
 
