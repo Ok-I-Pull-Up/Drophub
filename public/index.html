@@ -1,21 +1,64 @@
 <!DOCTYPE html>
 <html lang="pl">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0f1117" />
-    <meta
-      name="description"
-      content="DropHub - Polska społeczność kryptowalutowa. Edukacja, blog i informacje o airdropach i kryptowalutach."
-    />
-    <meta name="keywords" content="kryptowaluty, airdropy, blockchain, edukacja kryptowalutowa, polska społeczność krypto" />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <title>DropHub - Polska Społeczność Kryptowalutowa</title>
-  </head>
-  <body>
-    <noscript>Musisz włączyć JavaScript, aby uruchomić tę aplikację.</noscript>
-    <div id="root"></div>
-  </body>
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f1117" />
+  <meta name="description"
+    content="DropHub - Polska społeczność kryptowalutowa. Edukacja, blog i informacje o airdropach i kryptowalutach." />
+  <meta name="keywords"
+    content="kryptowaluty, airdropy, blockchain, edukacja kryptowalutowa, polska społeczność krypto" />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <title>DropHub - Polska Społeczność Kryptowalutowa</title>
+  <style>
+    .splash-logo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #0f1117;
+      z-index: 9999;
+    }
+
+    .splash-logo img {
+      max-width: 180px;
+      height: auto;
+    }
+
+    .splash-logo.fade-out {
+      opacity: 0;
+      transition: opacity 0.5s ease-out;
+    }
+  </style>
+</head>
+
+<body>
+  <noscript>Musisz włączyć JavaScript, aby uruchomić tę aplikację.</noscript>
+  <div class="splash-logo" id="splash-screen">
+    <img src="%PUBLIC_URL%/logo192.png" alt="DropHub Logo" />
+  </div>
+  <div id="root"></div>
+  <script>
+    // Usuń splash screen gdy aplikacja React jest gotowa
+    window.onload = function () {
+      setTimeout(function () {
+        const splash = document.getElementById('splash-screen');
+        if (splash) {
+          splash.classList.add('fade-out');
+          setTimeout(function () {
+            splash.style.display = 'none';
+          }, 500);
+        }
+      }, 300);
+    };
+  </script>
+</body>
+
 </html>
