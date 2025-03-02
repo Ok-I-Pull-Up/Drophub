@@ -1,4 +1,10 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, {
+	createContext,
+	useState,
+	useEffect,
+	useContext,
+	useCallback,
+} from 'react';
 import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
@@ -28,20 +34,26 @@ export function FirebaseProvider({ children }) {
 	const [user, setUser] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	const [profileData, setProfileData] = useState(null);
 
-	// Nasłuchiwanie zmian stanu autoryzacji
+	// Nasłuchiwanie zmian stanu autoryzacji - opóźnione wykonanie
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-			setUser(currentUser);
-			setLoading(false);
-		});
+		// Użycie setTimeout aby nie blokować pierwszego renderowania
+		const timeoutId = setTimeout(() => {
+			const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+				setUser(currentUser);
+				setLoading(false);
+			});
 
-		// Czyszczenie subskrypcji
-		return () => unsubscribe();
+			// Czyszczenie subskrypcji
+			return () => unsubscribe();
+		}, 0);
+
+		return () => clearTimeout(timeoutId);
 	}, []);
 
-	// Funkcja do rejestracji
-	const signUp = async (email, password) => {
+	// Memoizacja funkcji do rejestracji użytkownika
+	const signUp = useCallback(async (email, password) => {
 		try {
 			setLoading(true);
 			setError(null);
@@ -96,7 +108,7 @@ export function FirebaseProvider({ children }) {
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, []);
 
 	// Funkcja do logowania
 	const signIn = async (email, password) => {
@@ -243,16 +255,112 @@ export function FirebaseProvider({ children }) {
 		user,
 		loading,
 		error,
+		profileData,
 		signUp,
-		signIn,
-		signOut,
-		resetPassword,
+		signIn: useCallback(async (email, password) => {
+			try {
+				setLoading(true);
+				setError(null);
+
+				const userCredential = await signInWithEmailAndPassword(
+					auth,
+					email,
+					password
+				);
+				const user = userCredential.user;
+
+				console.log('Zalogowano pomyślnie');
+
+				return {
+					data: { user },
+					error: null,
+					success: true,
+				};
+			} catch (error) {
+				console.error('Błąd logowania');
+
+				let errorMessage = 'Błąd logowania';
+
+				// Tłumaczenie kodów błędów Firebase
+				if (
+					error.code === 'auth/invalid-credential' ||
+					error.code === 'auth/user-not-found' ||
+					error.code === 'auth/wrong-password'
+				) {
+					errorMessage = 'Nieprawidłowy email lub hasło';
+				} else if (error.code === 'auth/too-many-requests') {
+					errorMessage =
+						'Zbyt wiele nieudanych prób logowania. Spróbuj ponownie później';
+				} else if (error.code === 'auth/network-request-failed') {
+					errorMessage = 'Problem z połączeniem sieciowym, spróbuj ponownie';
+				}
+
+				setError(errorMessage);
+				return {
+					data: null,
+					error: {
+						message: errorMessage,
+						code: error.code,
+					},
+					success: false,
+				};
+			} finally {
+				setLoading(false);
+			}
+		}, []),
+		signOut: useCallback(async () => {
+			try {
+				await firebaseSignOut(auth);
+				console.log('Wylogowano pomyślnie');
+				return { success: true };
+			} catch (error) {
+				console.error('Logout error:', error);
+				return {
+					success: false,
+					error: error.message,
+				};
+			}
+		}, []),
+		resetPassword: useCallback(async (email) => {
+			try {
+				setLoading(true);
+				setError(null);
+
+				await sendPasswordResetEmail(auth, email);
+
+				console.log('Email resetujący hasło wysłany');
+				return {
+					success: true,
+					message:
+						'Link do resetowania hasła został wysłany na podany adres email',
+				};
+			} catch (error) {
+				console.error('Password reset error:', error);
+
+				let errorMessage = 'Błąd resetowania hasła';
+
+				if (error.code === 'auth/user-not-found') {
+					errorMessage = 'Nie znaleziono użytkownika z tym adresem email';
+				} else if (error.code === 'auth/invalid-email') {
+					errorMessage = 'Nieprawidłowy format adresu email';
+				}
+
+				setError(errorMessage);
+				return {
+					success: false,
+					error: errorMessage,
+				};
+			} finally {
+				setLoading(false);
+			}
+		}, []),
 		getProfile,
 		updateProfile,
 	};
 
 	return (
 		<FirebaseContext.Provider value={value}>
+			{/* Renderować children niezależnie od stanu wczytywania dla szybszego LCP */}
 			{children}
 		</FirebaseContext.Provider>
 	);
