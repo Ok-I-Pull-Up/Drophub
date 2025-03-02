@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useUser } from '../../context/UserContext';
+import { useFirebase } from '../../context/FirebaseContext';
 import './Auth.css';
 
 const Register = () => {
@@ -11,7 +11,7 @@ const Register = () => {
 	const [message, setMessage] = useState('');
 	const [error, setError] = useState('');
 
-	const { signUp } = useUser();
+	const { signUp } = useFirebase();
 	const navigate = useNavigate();
 
 	const handleSubmit = async (e) => {
@@ -35,13 +35,14 @@ const Register = () => {
 		}
 
 		try {
-			console.log('Rozpoczynam proces rejestracji...');
+			console.log('Rozpoczynam proces rejestracji dla:', email);
 			const response = await signUp(email, password);
-			console.log('Otrzymana odpowiedź z signUp:', response);
 
 			if (response.error) {
+				console.error('Błąd rejestracji:', response.error);
 				setError(response.error.message || 'Błąd rejestracji. Spróbuj ponownie.');
 			} else {
+				console.log('Rejestracja udana:', response.data.user.email);
 				setMessage('Rejestracja zakończona! Możesz teraz się zalogować.');
 
 				// Po udanej rejestracji przekieruj użytkownika na stronę logowania po 3 sekundach

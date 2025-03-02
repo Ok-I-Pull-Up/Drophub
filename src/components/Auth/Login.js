@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useUser } from '../../context/UserContext';
+import { useFirebase } from '../../context/FirebaseContext';
 import './Auth.css';
 
 const Login = () => {
@@ -10,7 +10,7 @@ const Login = () => {
 	const [message, setMessage] = useState('');
 	const [error, setError] = useState('');
 
-	const { signIn } = useUser();
+	const { signIn } = useFirebase();
 	const navigate = useNavigate();
 
 	const handleSubmit = async (e) => {
@@ -22,12 +22,14 @@ const Login = () => {
 		try {
 			console.log('Próba logowania dla:', email);
 
-			// Symulacja logowania
+			// Logowanie przez Firebase
 			const response = await signIn(email, password);
 
 			if (response.error) {
+				console.error('Błąd logowania:', response.error);
 				setError(response.error.message || 'Błąd logowania');
 			} else {
+				console.log('Logowanie udane:', response.data.user.email);
 				setMessage('Zalogowano pomyślnie!');
 				// Przekieruj użytkownika na stronę główną po udanym logowaniu
 				setTimeout(() => {

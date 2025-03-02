@@ -1,48 +1,93 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../../context/UserContext';
+import { useFirebase } from '../../context/FirebaseContext';
 import './Profile.css';
 
 const Profile = () => {
-	const { user, signOut } = useUser();
+	const {
+		user,
+		signOut,
+		getProfile,
+		updateProfile: updateUserProfile,
+	} = useFirebase();
 	const navigate = useNavigate();
 
 	const [loading, setLoading] = useState(false);
+	const [profileData, setProfileData] = useState({});
 	const [userName, setUserName] = useState('');
 	const [website, setWebsite] = useState('');
 	const [message, setMessage] = useState('');
 	const [error, setError] = useState('');
 
-	// Mockowane dane profilu (bez faktycznego pobierania z bazy danych)
-	const mockEmail = user?.email || 'uzytkownik@example.com';
-	const mockUserId = user?.id || 'mock-user-id';
+	// Pobieranie danych profilu użytkownika z Firestore
+	useEffect(() => {
+		if (user) {
+			const fetchProfile = async () => {
+				try {
+					const { data, error } = await getProfile(user.uid);
 
-	// Funkcja obsługująca aktualizację profilu (bez faktycznej aktualizacji w bazie danych)
-	const updateProfile = (e) => {
+					if (error) {
+						console.error('Błąd pobierania profilu:', error);
+						return;
+					}
+
+					if (data) {
+						setProfileData(data);
+						setUserName(data.userName || '');
+						setWebsite(data.website || '');
+					}
+				} catch (err) {
+					console.error('Nieoczekiwany błąd podczas pobierania profilu:', err);
+				}
+			};
+
+			fetchProfile();
+		}
+	}, [user, getProfile]);
+
+	// Funkcja obsługująca aktualizację profilu w Firestore
+	const handleUpdateProfile = async (e) => {
 		e.preventDefault();
 		setLoading(true);
 		setError('');
 		setMessage('');
 
-		// Symulacja przetwarzania
-		setTimeout(() => {
-			setMessage('Profil zaktualizowany pomyślnie!');
+		try {
+			const result = await updateUserProfile(user.uid, {
+				userName,
+				website,
+			});
+
+			if (result.success) {
+				setMessage('Profil zaktualizowany pomyślnie!');
+			} else {
+				setError(result.error || 'Nie udało się zaktualizować profilu');
+			}
+		} catch (err) {
+			console.error('Nieoczekiwany błąd podczas aktualizacji profilu:', err);
+			setError('Wystąpił nieoczekiwany błąd. Spróbuj ponownie.');
+		} finally {
 			setLoading(false);
-		}, 1000);
+		}
 	};
 
 	// Funkcja obsługująca wylogowanie
 	const handleLogout = async () => {
 		try {
-			await signOut();
-			navigate('/login');
+			const result = await signOut();
+			if (result.success) {
+				navigate('/login');
+			} else {
+				setError('Nie udało się wylogować. Spróbuj ponownie.');
+			}
 		} catch (error) {
 			console.error('Błąd podczas wylogowywania:', error);
+			setError('Wystąpił błąd podczas wylogowywania');
 		}
 	};
 
-	// Jeśli nie ma mock-użytkownika, pokazujemy komunikat o konieczności zalogowania
-	if (!user && !mockUserId) {
+	// Jeśli nie ma użytkownika, pokazujemy komunikat o konieczności zalogowania
+	if (!user) {
 		return (
 			<div className='profile-container'>
 				<div className='profile-card'>
@@ -71,14 +116,14 @@ const Profile = () => {
 			<div className='profile-card'>
 				<div className='profile-info'>
 					<p>
-						<strong>Email:</strong> {mockEmail}
+						<strong>Email:</strong> {user.email}
 					</p>
 					<p>
-						<strong>ID użytkownika:</strong> {mockUserId}
+						<strong>ID użytkownika:</strong> {user.uid}
 					</p>
 				</div>
 
-				<form onSubmit={updateProfile} className='profile-form'>
+				<form onSubmit={handleUpdateProfile} className='profile-form'>
 					<div className='form-group'>
 						<label htmlFor='username'>Nazwa użytkownika</label>
 						<input
