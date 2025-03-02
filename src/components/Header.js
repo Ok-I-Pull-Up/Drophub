@@ -78,7 +78,7 @@ const Header = () => {
 								</a>
 							</li>
 
-							{/* Wyświetlanie linków logowania/rejestracji tylko w widoku mobilnym */}
+							{/* Wyświetlanie linków logowania tylko w widoku mobilnym */}
 							<li className='mobile-auth'>
 								{user ? (
 									<>
@@ -102,17 +102,6 @@ const Header = () => {
 									</>
 								)}
 							</li>
-
-							{!user && (
-								<li className='mobile-auth'>
-									<Link
-										to='/register'
-										className='auth-nav-btn'
-										onClick={closeMenu}>
-										Rejestracja
-									</Link>
-								</li>
-							)}
 
 							<li>
 								<a
@@ -149,9 +138,6 @@ const Header = () => {
 							<div className='auth-buttons'>
 								<Link to='/login' className='login-btn'>
 									Logowanie
-								</Link>
-								<Link to='/register' className='register-btn'>
-									Rejestracja
 								</Link>
 							</div>
 						)}
