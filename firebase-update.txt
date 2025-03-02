@@ -1,0 +1,5 @@
+# Firebase Update
+
+This file was created to force a new deployment on Vercel with Firebase dependencies installed.
+
+Firebase dependencies were added to package.json on commit e1f2359. 
