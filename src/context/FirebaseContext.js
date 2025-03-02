@@ -46,8 +46,6 @@ export function FirebaseProvider({ children }) {
 			setLoading(true);
 			setError(null);
 
-			console.log('Rozpoczynam rejestrację dla:', email);
-
 			// Tworzenie konta użytkownika
 			const userCredential = await createUserWithEmailAndPassword(
 				auth,
@@ -63,7 +61,7 @@ export function FirebaseProvider({ children }) {
 				updatedAt: serverTimestamp(),
 			});
 
-			console.log('Użytkownik utworzony pomyślnie, id:', user.uid);
+			console.log('Użytkownik utworzony pomyślnie');
 
 			return {
 				data: { user },
@@ -71,7 +69,7 @@ export function FirebaseProvider({ children }) {
 				success: true,
 			};
 		} catch (error) {
-			console.error('Registration error:', error);
+			console.error('Błąd rejestracji');
 
 			let errorMessage = 'Błąd rejestracji';
 
@@ -106,8 +104,6 @@ export function FirebaseProvider({ children }) {
 			setLoading(true);
 			setError(null);
 
-			console.log('Próba logowania dla:', email);
-
 			const userCredential = await signInWithEmailAndPassword(
 				auth,
 				email,
@@ -115,7 +111,7 @@ export function FirebaseProvider({ children }) {
 			);
 			const user = userCredential.user;
 
-			console.log('Zalogowano pomyślnie:', user.uid);
+			console.log('Zalogowano pomyślnie');
 
 			return {
 				data: { user },
@@ -123,7 +119,7 @@ export function FirebaseProvider({ children }) {
 				success: true,
 			};
 		} catch (error) {
-			console.error('Login error:', error);
+			console.error('Błąd logowania');
 
 			let errorMessage = 'Błąd logowania';
 
