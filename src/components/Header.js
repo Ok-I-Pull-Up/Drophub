@@ -7,7 +7,7 @@ import { useFirebase } from '../context/FirebaseContext';
 const Logo = memo(() => (
 	<Link to='/' className='logo' id='main-logo'>
 		<FaCube className='logo-icon' />
-		Drop<span>Hub</span>
+		Drop<span>HuB</span>
 	</Link>
 ));
 
