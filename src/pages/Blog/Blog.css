@@ -223,39 +223,36 @@
 }
 
 .blog-card-more {
-	display: inline-flex;
-	align-items: center;
+	align-self: flex-start;
+	padding: 0.6rem 1.2rem;
 	background: linear-gradient(
 		135deg,
 		var(--accent-primary),
 		var(--accent-secondary)
 	);
 	color: white;
+	text-decoration: none;
 	font-weight: 500;
 	font-size: 0.9rem;
-	padding: 0.5rem 1.2rem;
 	border-radius: 50px;
-	text-decoration: none;
 	transition: all 0.3s ease;
-	border: none;
-	box-shadow: 0 4px 8px rgba(121, 40, 202, 0.2);
-	margin-top: 0.5rem;
+	box-shadow: 0 4px 10px rgba(121, 40, 202, 0.2);
+	display: inline-block;
+}
+
+.button-icon {
+	margin-left: 5px;
+	font-size: 0.8rem;
+	transition: transform 0.3s ease;
 }
 
 .blog-card-more:hover {
 	transform: translateY(-3px);
-	box-shadow: 0 6px 12px rgba(121, 40, 202, 0.3);
+	box-shadow: 0 6px 15px rgba(121, 40, 202, 0.3);
 }
 
-.blog-card-more::after {
-	content: '→';
-	margin-left: 0.5rem;
-	font-size: 1.1rem;
-	transition: transform 0.3s ease;
-}
-
-.blog-card-more:hover::after {
-	transform: translateX(4px);
+.blog-card-more:hover .button-icon {
+	transform: translateX(3px);
 }
 
 /* Brak postów */

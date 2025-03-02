@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaCalendar, FaClock } from 'react-icons/fa';
+import { FaCalendar, FaClock, FaArrowRight } from 'react-icons/fa';
 
 const BlogList = ({ posts }) => {
 	return (
@@ -35,7 +35,7 @@ const BlogList = ({ posts }) => {
 						</h2>
 						<p className='blog-card-excerpt'>{post.excerpt}</p>
 						<Link to={`/blog/${post.slug}`} className='blog-card-more'>
-							Czytaj więcej
+							Czytaj więcej <FaArrowRight className='button-icon' />
 						</Link>
 					</div>
 				</div>
