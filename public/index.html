@@ -6,6 +6,18 @@
   <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#0f1117" />
+
+  <!-- Preconnect do kluczowych domen -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Preload logo - kluczowy element LCP z różnymi formatami i rozmiarami -->
+  <link rel="preload" href="%PUBLIC_URL%/optimized/logo192.webp" as="image" fetchpriority="high" type="image/webp" />
+  <link rel="preload" href="%PUBLIC_URL%/logo192.png" as="image" fetchpriority="high" />
+
+  <!-- Preload dla mniejszych wersji dla szybszego pierwszego renderowania -->
+  <link rel="preload" href="%PUBLIC_URL%/optimized/logo96.webp" as="image" />
+
   <meta name="description"
     content="DropHub - Polska społeczność kryptowalutowa. Edukacja, blog i informacje o airdropach i kryptowalutach." />
   <meta name="keywords"
@@ -14,50 +26,238 @@
   <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
   <title>DropHub - Polska Społeczność Kryptowalutowa</title>
   <style>
-    .splash-logo {
+    /* Natychmiastowe pokazanie tła, bez czekania na JS */
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0f1117;
+      overflow-x: hidden;
+    }
+
+    /* Stylizacja splash screena */
+    .splash-wrapper {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       background-color: #0f1117;
       z-index: 9999;
+      transition: opacity 0.6s ease-out;
+    }
+
+    .splash-logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     .splash-logo img {
       max-width: 180px;
       height: auto;
+      /* Dodaj spójne wymiary, aby uniknąć przeskoków layoutu */
+      width: 180px;
+      aspect-ratio: 1;
+      animation: pulse 2s infinite;
     }
 
-    .splash-logo.fade-out {
+    .splash-logo h1 {
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+      font-size: 1.8rem;
+      margin-top: 1rem;
       opacity: 0;
-      transition: opacity 0.5s ease-out;
+      animation: fadeIn 0.5s ease-out forwards;
+      animation-delay: 0.3s;
+    }
+
+    .splash-logo span {
+      color: #7928ca;
+    }
+
+    .loading-bar {
+      margin-top: 2rem;
+      width: 200px;
+      height: 4px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .loading-progress {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background-color: #7928ca;
+      animation: loading 3s ease-out forwards;
+    }
+
+    @keyframes loading {
+      0% {
+        width: 0%;
+      }
+
+      50% {
+        width: 70%;
+      }
+
+      100% {
+        width: 100%;
+      }
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Ukryj flash of unstyled content */
+    #root {
+      opacity: 0;
+      transition: opacity 0.5s ease-in;
+    }
+
+    #root.visible {
+      opacity: 1;
+    }
+
+    .splash-wrapper.fade-out {
+      opacity: 0;
+      pointer-events: none;
     }
   </style>
 </head>
 
 <body>
   <noscript>Musisz włączyć JavaScript, aby uruchomić tę aplikację.</noscript>
-  <div class="splash-logo" id="splash-screen">
-    <img src="%PUBLIC_URL%/logo192.png" alt="DropHub Logo" />
+
+  <div class="splash-wrapper" id="splash-screen">
+    <div class="splash-logo">
+      <picture>
+        <source type="image/webp" srcset="%PUBLIC_URL%/optimized/logo192.webp">
+        <img src="%PUBLIC_URL%/logo192.png" alt="DropHub Logo" width="180" height="180" fetchpriority="high" />
+      </picture>
+      <h1>Drop<span>Hub</span></h1>
+      <div class="loading-bar">
+        <div class="loading-progress"></div>
+      </div>
+    </div>
   </div>
+
   <div id="root"></div>
+
   <script>
-    // Usuń splash screen gdy aplikacja React jest gotowa
-    window.onload = function () {
-      setTimeout(function () {
+    // Inline script dla najszybszego reagowania
+    (function () {
+      // Preload obrazów po załadowaniu splash screena
+      const preloadAssets = () => {
+        // Preload krytycznych obrazów
+        const imagesToPreload = [
+          '/optimized/logo96.webp',
+          '/optimized/logo48.webp'
+        ];
+
+        imagesToPreload.forEach(imgPath => {
+          const img = new Image();
+          img.src = window.location.origin + imgPath;
+        });
+      };
+
+      // Wywołaj preload gdy dokument jest już załadowany
+      if (document.readyState !== 'loading') {
+        preloadAssets();
+      } else {
+        document.addEventListener('DOMContentLoaded', preloadAssets);
+      }
+
+      // Wsparcie dla requestIdleCallback w starszych przeglądarkach
+      window.requestIdleCallback = window.requestIdleCallback ||
+        function (cb) { return setTimeout(function () { cb({ timeRemaining: function () { return 50; } }); }, 1); };
+
+      // Oznacz root jako widoczny przed usunięciem splash screena
+      const markRootVisible = () => {
+        requestIdleCallback(function () {
+          const root = document.getElementById('root');
+          if (root) {
+            root.classList.add('visible');
+          }
+        });
+      };
+
+      // Usuń splash screen po określonym czasie lub gdy aplikacja React jest gotowa
+      let removalTimer = null;
+      let removeStarted = false;
+
+      const removeSplash = function () {
+        if (removeStarted) return;
+        removeStarted = true;
+
+        // Najpierw pokazujemy root
+        markRootVisible();
+
+        // Następnie usuwamy splash z opóźnieniem dla zapewnienia płynnego przejścia
         const splash = document.getElementById('splash-screen');
         if (splash) {
           splash.classList.add('fade-out');
           setTimeout(function () {
             splash.style.display = 'none';
-          }, 500);
+
+            // Anuluj timer jeśli jeszcze istnieje
+            if (removalTimer) {
+              clearTimeout(removalTimer);
+              removalTimer = null;
+            }
+          }, 600); // Dopasowane do czasu trwania animacji
         }
-      }, 300);
-    };
+      };
+
+      // Usuń splash screen po maksymalnym czasie lub gdy React jest gotowy
+      removalTimer = setTimeout(removeSplash, 3300); // Dostosuj do czasu animacji paska ładowania
+
+      // Obserwuj root, aby wiedzieć kiedy React załadował zawartość
+      const observer = new MutationObserver(function (mutations) {
+        if (document.getElementById('root').children.length > 0) {
+          removeSplash();
+          observer.disconnect();
+        }
+      });
+
+      observer.observe(document.getElementById('root'), { childList: true, subtree: true });
+
+      // Również reaguj na zdarzenie onload
+      window.addEventListener('load', function () {
+        // Używamy czasomierza, aby dać czas na ukończenie animacji ładowania
+        setTimeout(removeSplash, 800);
+      });
+    })();
   </script>
 </body>
 
