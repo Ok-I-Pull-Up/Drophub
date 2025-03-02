@@ -1,20 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaCube, FaDiscord, FaUser, FaSignOutAlt } from 'react-icons/fa';
 import { useFirebase } from '../context/FirebaseContext';
 
+// Wyekstrahowany komponent logo dla lepszej wydajności
+const Logo = memo(() => (
+	<Link to='/' className='logo' id='main-logo'>
+		<FaCube className='logo-icon' />
+		Drop<span>Hub</span>
+	</Link>
+));
+
+// Memoizacja całego komponentu Header
 const Header = () => {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 	const [scrolled, setScrolled] = useState(false);
 	const { user, signOut } = useFirebase();
 	const navigate = useNavigate();
 
+	// Lazy initialization dla event listenera
 	useEffect(() => {
 		const handleScroll = () => {
 			setScrolled(window.scrollY > 50);
 		};
 
-		window.addEventListener('scroll', handleScroll);
+		// Dodanie atrybutu priority do logo dla LCP
+		const logoElement = document.getElementById('main-logo');
+		if (logoElement) {
+			logoElement.setAttribute('fetchpriority', 'high');
+		}
+
+		// Użycie passive listener dla lepszej wydajności
+		window.addEventListener('scroll', handleScroll, { passive: true });
 		return () => window.removeEventListener('scroll', handleScroll);
 	}, []);
 
@@ -42,10 +59,7 @@ const Header = () => {
 		<header className={`header ${scrolled ? 'scrolled' : ''}`}>
 			<div className='container'>
 				<div className='header-content'>
-					<Link to='/' className='logo'>
-						<FaCube className='logo-icon' />
-						Drop<span>Hub</span>
-					</Link>
+					<Logo />
 
 					<div
 						className={`mobile-menu-btn ${mobileMenuOpen ? 'active' : ''}`}
@@ -148,4 +162,4 @@ const Header = () => {
 	);
 };
 
-export default Header;
+export default memo(Header);
